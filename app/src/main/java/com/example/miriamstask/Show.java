@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "shows")
 public class Show implements Serializable{
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     public long showId;
 
     @ColumnInfo(name = "show_name")

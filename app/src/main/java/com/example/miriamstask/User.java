@@ -32,7 +32,7 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     public long uid;
 
     @ColumnInfo(name = "first_name")

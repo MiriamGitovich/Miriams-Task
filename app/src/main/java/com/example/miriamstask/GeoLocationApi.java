@@ -68,7 +68,7 @@ public class GeoLocationApi {
     }
 
     //API 1: purchase a show with restriction.
-    public boolean purchaseShow(int userId, String showName,Location geolocation){
+    public boolean purchaseShow(long userId, String showName,Location geolocation){
         if(isGeolocationInIsrael(geolocation)){
             purchase(userId,  showName);
             return true;
@@ -76,21 +76,17 @@ public class GeoLocationApi {
         return false;
     }
 
-    private void purchase(final int userId, final String showName) {
+    private void purchase(final long userId, final String showName) {
         class purchaseTask extends AsyncTask<Void, Void, Void> {
 
             @Override
             protected Void doInBackground(Void... voids) {
 
-                User user = new User();
-                user.setUid(userId);
-
                 Show show = DatabaseShow.getInstance(context).getAppDatabase().showDao().findByName(showName);
-                ShowsForUser showsForUser = new ShowsForUser();
-                showsForUser.setUser(user);
-                List<Show> showList = new ArrayList<Show>();
-                showList.add(show);
-                showsForUser.setShows(showList);
+
+                UserShowCrossRef showsForUser = new UserShowCrossRef();
+                showsForUser.setUid(userId);
+                showsForUser.setShowId(show.getShowId());
                 DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(showsForUser);
 
                 return null;
@@ -99,6 +95,8 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+                Log.d("purchase","purchase "+showName);
+
             }
         }
 
@@ -141,21 +139,21 @@ public class GeoLocationApi {
             @Override
             protected Void doInBackground(Void... voids) {
 
-                Show show = new Show();
-                show.setShowId(showId);
-
-                List<Show> showList = DatabaseShow.getInstance(context).getAppDatabase().showDao().loadShowById(showId);
-                if(!showList.isEmpty()){
-                    if (edit) {
-                        show = showList.get(0);
-                        GeoLocation geoLocation = new GeoLocation();
-                      //  geoLocation.setShowId(show.getShowId());
-                        geoLocation.setGeoRestrictionLatitude(latitude);
-                        geoLocation.setGeoRestrictionLongitude(longitude);
-                       // DatabaseShow.getInstance(context).getAppDatabase().showDao().upd(geoLocation);
-                        return null;
-                    }
-                }
+                //Show show = new Show();
+                //show.setShowId(showId);
+                //
+                //List<Show> showList = DatabaseShow.getInstance(context).getAppDatabase().showDao().loadShowById(showId);
+                //if(!showList.isEmpty()){
+                //    if (edit) {
+                //        show = showList.get(0);
+                //        GeoLocation geoLocation = new GeoLocation();
+                //      //  geoLocation.setShowId(show.getShowId());
+                //        geoLocation.setGeoRestrictionLatitude(latitude);
+                //        geoLocation.setGeoRestrictionLongitude(longitude);
+                //       // DatabaseShow.getInstance(context).getAppDatabase().showDao().upd(geoLocation);
+                //        return null;
+                //    }
+                //}
                 return null;
 
             }
@@ -240,6 +238,72 @@ public class GeoLocationApi {
         }
 
         getTask st = new getTask();
+        st.execute();
+    }
+
+
+    public void insertUser(final User user){
+        class insertTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(user);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d("insert","insertUser");
+
+            }
+        }
+
+        insertTask st = new insertTask();
+        st.execute();
+    }
+
+    public void insertShow(final Show show){
+        class insertTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(show);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d("insert","insertShow");
+
+            }
+        }
+
+        insertTask st = new insertTask();
+        st.execute();
+    }
+    public void insertUserShowCrossRef(final UserShowCrossRef showsForUser){
+        class insertTask extends AsyncTask<Void, Void, Void> {
+
+            @Override
+            protected Void doInBackground(Void... voids) {
+                DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(showsForUser);
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d("insert","insertShowForUser");
+
+            }
+        }
+
+        insertTask st = new insertTask();
         st.execute();
     }
 }

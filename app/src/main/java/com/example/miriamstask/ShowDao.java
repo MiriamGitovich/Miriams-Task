@@ -20,8 +20,8 @@ public interface ShowDao {
     @Query("SELECT * FROM shows WHERE showId LIKE :showId")
     List<Show> loadShowById(int showId);
 
-    @Query("SELECT * from shows")
-     List<ShowWithGeoLocation> loadShowWithGeoLocation();
+    //@Query("SELECT * from shows")
+    // List<ShowWithGeoLocation> loadShowWithGeoLocation();
 
     @Query("SELECT * FROM shows WHERE show_name LIKE :name LIMIT 1")
     Show findByName(String name);
@@ -33,15 +33,18 @@ public interface ShowDao {
     long insert(Show show);
 
     @Insert
-    long insert(GeoLocation geoLocation);
+    long insert(User user);
+
+    //@Insert
+    //long insert(GeoLocation geoLocation);
 
     @Insert
-    long insert(ShowsForUser show);
+    long insert(UserShowCrossRef usershow);
 
     @Query("SELECT * FROM users")
     List<ShowsForUser> loadUserWithShows();
 
-    @Query("SELECT show_name from UserShowCrossRef JOIN shows on shows.showId = UserShowCrossRef.showId GROUP BY showId ORDER BY COUNT(showId) DESC")
+    @Query("SELECT show_name from UserShowCrossRef JOIN shows on shows.showId = UserShowCrossRef.showId GROUP BY UserShowCrossRef.showId ORDER BY COUNT(UserShowCrossRef.showId) DESC")
     String loadMostPopularShowName();
 
     @Query("SELECT Count(showId) from UserShowCrossRef GROUP BY showId ORDER BY COUNT(showId) DESC")
