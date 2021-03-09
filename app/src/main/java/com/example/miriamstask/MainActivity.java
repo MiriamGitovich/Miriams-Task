@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         showsForUser3.setUid(user2.getUid());
         showsForUser3.setShowId(show1.getShowId());
 
-
         geoLocationApi.insertShow(show1);
         geoLocationApi.insertShow(show2);
         geoLocationApi.insertUser(user1);
@@ -63,14 +62,28 @@ public class MainActivity extends AppCompatActivity {
         geoLocationApi.purchaseShow(user2.getUid(), "The little boy",geolocation);
         geoLocationApi.purchaseShow(user2.getUid(), "The big boy",geolocationN);
 
+        GeoLocation geoLocation1 = new GeoLocation();
+        geoLocation1.setShowGeoId(111);
+        geoLocation1.setShowId(1);
+        geoLocation1.setGeoRestrictionLatitude(31.801843451822567);
+        geoLocation1.setGeoRestrictionLongitude(35.21209708170776);
+        geoLocationApi.insertGeoLocation(geoLocation1);
+        GeoLocation geoLocation2 = new GeoLocation();
+        geoLocation2.setShowGeoId(222);
+
+        geoLocation2.setShowId(2);
+        geoLocation2.setGeoRestrictionLatitude(31.801843451822567);
+        geoLocation2.setGeoRestrictionLongitude(35.21209708170776);
+        geoLocationApi.insertGeoLocation(geoLocation2);
+
         geoLocationApi.getMostPopularShowName();
         geoLocationApi.getMostPopularShowCount();
 
-        //Location location = new Location();
-        //location.setLatitude(31.80144241242889);
-        //location.setLongitude( 35.209357795206095);
-        //String g = geoLocationApi.purchaseShow(1,"The little boy", location);
-      //  textView.setText(g);
+        geoLocationApi.viewShow(user1.getUid(), "The little boy",  geolocation );
+        geoLocationApi.viewShow(user2.getUid(), "The little boy",  geolocation );
+        geoLocationApi.viewShow(user2.getUid(), "The big boy",  geolocation );
+        geoLocationApi.viewShow(user2.getUid(), "The little boy",  geolocationN );
+
     }
 
 

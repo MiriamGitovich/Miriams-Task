@@ -3,7 +3,6 @@ package com.example.miriamstask;
 import java.util.List;
 
 import androidx.room.Embedded;
-import androidx.room.Entity;
 import androidx.room.Junction;
 import androidx.room.Relation;
 
@@ -12,7 +11,7 @@ public class ShowsForUser {
     @Embedded
     public User user;
 
-    @Relation(parentColumn = "showId", entityColumn = "uid", associateBy = @Junction(UserShowCrossRef.class))
+    @Relation(parentColumn = "uid", entityColumn = "showId", associateBy = @Junction(UserShowCrossRef.class))
     public List<Show> shows;
 
     public User getUser() {

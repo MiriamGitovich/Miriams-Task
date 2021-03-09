@@ -2,11 +2,15 @@ package com.example.miriamstask;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
-@Entity(tableName = "shows")
+@Entity(tableName = "geolocations")
 public class GeoLocation {
 
-    @ColumnInfo(name = "showId")
+    @PrimaryKey
+    public long showGeoId;
+
+    @ColumnInfo
     public int showId;
 
     @ColumnInfo(name = "geo_restriction_latitude")
@@ -38,5 +42,12 @@ public class GeoLocation {
 
     public void setGeoRestrictionLongitude(double geoRestrictionLongitude) {
         this.geoRestrictionLongitude = geoRestrictionLongitude;
+    }
+    public long getShowGeoId() {
+        return showGeoId;
+    }
+
+    public void setShowGeoId(long showGeoId) {
+        this.showGeoId = showGeoId;
     }
 }

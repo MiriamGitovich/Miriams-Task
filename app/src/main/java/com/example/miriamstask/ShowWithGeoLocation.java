@@ -9,6 +9,6 @@ public class ShowWithGeoLocation {
 
         @Embedded
         public Show show;
-        @Relation(parentColumn = "id", entityColumn = "showId", entity = GeoLocation.class)
+        @Relation(parentColumn = "showId", entityColumn = "showId", entity = GeoLocation.class)
         public List<GeoLocation> geoLocationsList;
 }

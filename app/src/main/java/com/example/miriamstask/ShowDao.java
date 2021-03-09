@@ -20,8 +20,9 @@ public interface ShowDao {
     @Query("SELECT * FROM shows WHERE showId LIKE :showId")
     List<Show> loadShowById(int showId);
 
-    //@Query("SELECT * from shows")
-    // List<ShowWithGeoLocation> loadShowWithGeoLocation();
+    @Transaction
+    @Query("SELECT * from shows")
+     List<ShowWithGeoLocation> loadShowWithGeoLocation();
 
     @Query("SELECT * FROM shows WHERE show_name LIKE :name LIMIT 1")
     Show findByName(String name);
@@ -29,14 +30,20 @@ public interface ShowDao {
     @Query("SELECT Count(showId) FROM UserShowCrossRef WHERE uid LIKE :userid")
     int showForUser(int userid);
 
+    @Query("SELECT Count(showId) FROM UserShowCrossRef WHERE uid LIKE :user_id AND showId LIKE :show_id")
+    int userHasShow(long user_id, long show_id);
+
+    @Query("SELECT Count(showGeoId) FROM geolocations WHERE showId LIKE :show_id AND geo_restriction_latitude LIKE :latitude AND geo_restriction_longitude LIKE :longitude")
+    int showHasLocation(long show_id, double latitude, double longitude);
+
     @Insert
     long insert(Show show);
 
     @Insert
     long insert(User user);
 
-    //@Insert
-    //long insert(GeoLocation geoLocation);
+    @Insert
+    long insert(GeoLocation geoLocation);
 
     @Insert
     long insert(UserShowCrossRef usershow);
@@ -61,17 +68,4 @@ public interface ShowDao {
     @Update
      void updateShow(Show... show);
 
-    //@Transaction
-    //public void insert(Show show, List<GeoLocation> geoLocationList) {
-    //
-    //    // Save rowId of inserted CompanyEntity as companyId
-    //    final long showId = insert(show);
-    //
-    //    // Set companyId for all related employeeEntities
-    //    for (GeoLocation geoLocation : geoLocationList) {
-    //        geoLocation.setShowId(showId);
-    //        insert(geoLocation);
-    //    }
-    //
-    //}
 }

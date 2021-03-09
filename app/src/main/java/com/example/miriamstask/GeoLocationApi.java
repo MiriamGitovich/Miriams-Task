@@ -8,57 +8,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-//API 1: purchase a show with restriction.
-//
-//        The API should receive user id, show name and geolocation.
-//
-//        API implementation will check if this user is from Israel based on his location and block a purchase outside of Israel.
-//
-//        Response
-//
-//        Return the appropriate http status to the client and in case of error explain what the error was.
-
-
-//API 2: Append restrictions for viewing the show.
-//
-//        This API should receive show id and geolocation viewing restriction (where it can be played).
-//
-//        Example: show with id “x” can be viewed only if the user is in geolocation “y”
-//
-//        API implementation will save the restriction to the DB.
-//
-//        API implementation will allow editing an existing restriction for a show.
-//
-//        API implementation will allow appending more than 1 restriction for each show.
-
-
-//API 3: view the show you purchased with restriction.
-//
-//        The API should receive user id, show name and geolocation.
-//
-//        API implementation should allow view in case the user already purchased the show.
-//
-//        API implementation should allow view in case the user does not violate any restriction of this show.
-//
-//        API implementation should aggregate the geolocation from a local DB. If the geolocation does not exist in the DB, or your DB is not accessible, get the info from an external service and then try to store it in the DB again. (if it is accessible).
-//
-//        Response
-//
-//        Return the appropriate http status to the client and in case of error explain what the error was.
-
-
-//
-//        API 4: get the most popular views.
-//
-//        The API should return the most popular show and the number of times it was played.
-//
-//        Response
-//
-//        Return the appropriate http status to the client and in case of error explain what the error was.
 
 public class GeoLocationApi {
     Context context;
@@ -138,22 +90,21 @@ public class GeoLocationApi {
 
             @Override
             protected Void doInBackground(Void... voids) {
-
-                //Show show = new Show();
-                //show.setShowId(showId);
-                //
-                //List<Show> showList = DatabaseShow.getInstance(context).getAppDatabase().showDao().loadShowById(showId);
-                //if(!showList.isEmpty()){
-                //    if (edit) {
-                //        show = showList.get(0);
-                //        GeoLocation geoLocation = new GeoLocation();
-                //      //  geoLocation.setShowId(show.getShowId());
-                //        geoLocation.setGeoRestrictionLatitude(latitude);
-                //        geoLocation.setGeoRestrictionLongitude(longitude);
-                //       // DatabaseShow.getInstance(context).getAppDatabase().showDao().upd(geoLocation);
-                //        return null;
-                //    }
-                //}
+                Show show;
+                List<Show> showList = DatabaseShow.getInstance(context).getAppDatabase().showDao().loadShowById(showId);
+                if(!showList.isEmpty()){
+                    GeoLocation geoLocation = new GeoLocation();
+                    geoLocation.setGeoRestrictionLatitude(latitude);
+                    geoLocation.setGeoRestrictionLongitude(longitude);
+                    if(edit) {
+                        show = showList.get(0);
+                        DatabaseShow.getInstance(context).getAppDatabase().showDao().updateShow(show);
+                    }else{
+                        geoLocation.setShowId(showId);
+                        DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(geoLocation);
+                    }
+                    return null;
+                }
                 return null;
 
             }
@@ -171,14 +122,27 @@ public class GeoLocationApi {
 
 
 //API 3: view the show you purchased with restriction.
-    public void viewShow(final int userId, String showName, Location geolocation){
+    public void viewShow(final long userId,final String showName,final Location geolocation){
         class getTask extends AsyncTask<Void, Void, String> {
 
             @Override
             protected String doInBackground(Void... voids) {
-                int count = DatabaseShow.getInstance(context).getAppDatabase().showDao().showForUser(userId);
-                if(count>0){
-                    return "the user already purchased the show";
+                //1
+                boolean alreadyPurchased = false, notViolateRestriction = false;
+                Show show = DatabaseShow.getInstance(context).getAppDatabase().showDao().findByName(showName);
+                int count = DatabaseShow.getInstance(context).getAppDatabase().showDao().userHasShow(userId, show.getShowId());
+                if(count > 0){
+                    alreadyPurchased = true;
+                }
+
+                //2
+
+                int count2 = DatabaseShow.getInstance(context).getAppDatabase().showDao().showHasLocation(show.getShowId(), geolocation.getLatitude(),geolocation.getLongitude());
+                if(count2 > 0){
+                    notViolateRestriction = true;
+                }
+                if(alreadyPurchased && notViolateRestriction){
+                    return "allowed";
                 }
                 else{
                     return "not allowed";
@@ -188,7 +152,7 @@ public class GeoLocationApi {
 
             @Override
             protected void onPostExecute(String str) {
-                Log.d("viewShow",str);
+                Log.d("viewShow",userId+ " "+showName+ " "+str);
 
             }
         }
@@ -285,12 +249,12 @@ public class GeoLocationApi {
         insertTask st = new insertTask();
         st.execute();
     }
-    public void insertUserShowCrossRef(final UserShowCrossRef showsForUser){
+    public void insertGeoLocation(final GeoLocation geoLocation){
         class insertTask extends AsyncTask<Void, Void, Void> {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(showsForUser);
+                DatabaseShow.getInstance(context).getAppDatabase().showDao().insert(geoLocation);
 
                 return null;
             }
@@ -298,7 +262,7 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d("insert","insertShowForUser");
+                Log.d("insert","insertGeoLocation");
 
             }
         }
