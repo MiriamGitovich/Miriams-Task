@@ -14,6 +14,8 @@ import java.util.Locale;
 
 public class GeoLocationApi {
     Context context;
+    private static final String LOG_TAG = "GeoLocationApi";
+
 
     public GeoLocationApi(Context c){
         context = c;
@@ -47,7 +49,7 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d("purchase","purchase "+showName);
+                Log.d(LOG_TAG,"purchase "+showName);
 
             }
         }
@@ -60,7 +62,6 @@ public class GeoLocationApi {
             Geocoder geocoder = new Geocoder(context, Locale.getDefault());
             try {
                 List<Address> addresses = geocoder.getFromLocation(geolocation.getLatitude(), geolocation.getLongitude(), 1);
-               // List<Address> addresses = geocoder.getFromLocation( 31.801442412428894, 35.209357795206095, 1);
 
                 if (addresses.size() > 0)
                 {
@@ -79,12 +80,12 @@ public class GeoLocationApi {
 
 
     //API 2: Append restrictions for viewing the show.
-    public void showRestriction(int showId, Location geolocation, boolean edit){
-        saveRestriction(showId, geolocation.getLatitude(), geolocation.getLongitude(), edit );
+    public void showRestriction(long showId, GeoLocation geolocation, boolean edit){
+        saveRestriction(showId, geolocation, edit );
 
     }
 
-    private void saveRestriction(final int showId, final double latitude, final double longitude, final boolean edit) {
+    private void saveRestriction(final long showId, final GeoLocation geolocation, final boolean edit) {
 
         class SaveTask extends AsyncTask<Void, Void, Void> {
 
@@ -94,8 +95,9 @@ public class GeoLocationApi {
                 List<Show> showList = DatabaseShow.getInstance(context).getAppDatabase().showDao().loadShowById(showId);
                 if(!showList.isEmpty()){
                     GeoLocation geoLocation = new GeoLocation();
-                    geoLocation.setGeoRestrictionLatitude(latitude);
-                    geoLocation.setGeoRestrictionLongitude(longitude);
+                    geoLocation.setGeoRestrictionLatitude(geolocation.getGeoRestrictionLatitude());
+                    geoLocation.setGeoRestrictionLongitude(geolocation.getGeoRestrictionLongitude());
+                    geoLocation.setShowGeoId(geolocation.getShowGeoId());
                     if(edit) {
                         show = showList.get(0);
                         DatabaseShow.getInstance(context).getAppDatabase().showDao().updateShow(show);
@@ -112,6 +114,8 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+                Log.d(LOG_TAG,"saveRestriction ");
+
             }
         }
 
@@ -152,7 +156,7 @@ public class GeoLocationApi {
 
             @Override
             protected void onPostExecute(String str) {
-                Log.d("viewShow",userId+ " "+showName+ " "+str);
+                Log.d(LOG_TAG,"viewShow " +userId+ " "+showName+ " "+str);
 
             }
         }
@@ -177,7 +181,7 @@ public class GeoLocationApi {
 
             @Override
             protected void onPostExecute(String string) {
-                Log.d("getMostPopularShowName",string);
+                Log.d(LOG_TAG," getMostPopularShowName"+string);
             }
         }
 
@@ -197,7 +201,7 @@ public class GeoLocationApi {
 
             @Override
             protected void onPostExecute(Integer count) {
-                Log.d("getMostPopularShowCount",count+"");
+                Log.d(LOG_TAG,"getMostPopularShowCount "+count+"");
             }
         }
 
@@ -219,7 +223,7 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d("insert","insertUser");
+                Log.d(LOG_TAG,"insertUser");
 
             }
         }
@@ -241,7 +245,7 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d("insert","insertShow");
+                Log.d(LOG_TAG,"insertShow");
 
             }
         }
@@ -262,7 +266,7 @@ public class GeoLocationApi {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                Log.d("insert","insertGeoLocation");
+                Log.d(LOG_TAG,"insertGeoLocation");
 
             }
         }

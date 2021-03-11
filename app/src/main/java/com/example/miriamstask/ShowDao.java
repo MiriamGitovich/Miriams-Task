@@ -9,7 +9,7 @@ import androidx.room.Transaction;
 import androidx.room.Update;
 import androidx.room.Query;
 
-@Dao
+@Dao  // Data Access Object
 public interface ShowDao {
     @Query("SELECT * FROM shows")
     List<Show> getAll();
@@ -18,7 +18,7 @@ public interface ShowDao {
     List<Show> loadAllByIds(int[] showIds);
 
     @Query("SELECT * FROM shows WHERE showId LIKE :showId")
-    List<Show> loadShowById(int showId);
+    List<Show> loadShowById(long showId);
 
     @Transaction
     @Query("SELECT * from shows")

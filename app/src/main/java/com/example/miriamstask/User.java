@@ -8,6 +8,18 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "users")
 public class User implements Serializable {
+
+    @PrimaryKey
+    public long uid;
+
+    @ColumnInfo(name = "first_name")
+    public String firstName;
+
+    @ColumnInfo(name = "last_name")
+    public String lastName;
+
+
+
     public long getUid() {
         return uid;
     }
@@ -32,12 +44,5 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
-    @PrimaryKey
-    public long uid;
 
-    @ColumnInfo(name = "first_name")
-    public String firstName;
-
-    @ColumnInfo(name = "last_name")
-    public String lastName;
 }

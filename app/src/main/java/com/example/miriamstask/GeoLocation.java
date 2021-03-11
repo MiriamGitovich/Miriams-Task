@@ -11,7 +11,7 @@ public class GeoLocation {
     public long showGeoId;
 
     @ColumnInfo
-    public int showId;
+    public long showId;
 
     @ColumnInfo(name = "geo_restriction_latitude")
     public double geoRestrictionLatitude;
@@ -20,11 +20,11 @@ public class GeoLocation {
     public double geoRestrictionLongitude;
 
 
-    public int getShowId() {
+    public long getShowId() {
         return showId;
     }
 
-    public void setShowId(int showId) {
+    public void setShowId(long showId) {
         this.showId = showId;
     }
 

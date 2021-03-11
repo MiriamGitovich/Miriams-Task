@@ -8,6 +8,8 @@ public class UserShowCrossRef {
 
     public long uid;
 
+    public long showId;
+
     public long getUid() {
         return uid;
     }
@@ -24,5 +26,4 @@ public class UserShowCrossRef {
         this.showId = showId;
     }
 
-    public long showId;
 }
